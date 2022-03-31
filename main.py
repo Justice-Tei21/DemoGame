@@ -6,7 +6,6 @@ from images import *
 from classes import *
 import random
 
-from math import fabs
 
 
 
@@ -28,59 +27,27 @@ pygame.display.set_icon(icon)
 
 
 player_hit = pygame.USEREVENT + 1
+enemy_hit= pygame.USEREVENT +2
 
-def drawcontainers(image, placementx,placementy, offset, maximum=0,objects=[]):
-    placementx=0
+def drawcontainers(image, offset,placementy, placementx, maximum=0,objects=[]):
+    offset=0
     for amount in range(int(maximum-len(objects))):
-        screen.blit(image,(placementx*32+offset,placementy))
-        placementx += 1
+        screen.blit(image,(offset*32+placementx,placementy))
+        offset += 1
 
 def draw_window(green, player_bullet, enemies,current_health):
     #screen.fill(WHITE)
     screen.blit(background, (0, 0))
 
-    contaierx= 0
-    containerOffset=20
-    for bullet in player_bullet:
 
+    enemies.draw()
+    green.draw()
+    for bullet in player_bullet:
         screen.blit(bullet_image, bullet)
-    """
-    for container in range(MAX_BULLETS-len(player_bullet)):
-        screen.blit(bullet_image, (contaierx * 32 + containerOffset, 20))
-        contaierx += 1
-    """
 
     drawcontainers(bullet_image,0,50,10,MAX_BULLETS,player_bullet)
     drawcontainers(heart_image,20,20,10,current_health)
-
-
-    for enemy in enemies:
-        enemy.draw()
-
-    screen.blit(space_ship, (green.x, green.y))
     pygame.display.update()
-
-"""
-def player_movement(keys_pressed, green):
-    if keys_pressed[pygame.K_d] and green.x + PLAYER_WIDTH < WIDTH:  # höger
-        green.x = green.x + VEL
-    if keys_pressed[pygame.K_w] and green.y > 0:  # upp
-        green.y = green.y - VEL
-    if keys_pressed[pygame.K_a] and green.x > 0:  # vänster
-        green.x = green.x - VEL
-    if keys_pressed[pygame.K_s] and green.y + PLAYER_HEIGHT < HEIGHT:  # ner
-        green.y = green.y + VEL
-"""
-
-
-
-def enemy_movement(enemy_count, player):
-    for enemy in enemy_count:
-        enemy.movement(player)
-
-        if enemy.rect.right<0:
-            enemy_count.remove(enemy)
-
 
 
 def handle_bullets(player_bullets, green):
@@ -90,34 +57,19 @@ def handle_bullets(player_bullets, green):
         bullet.rect.x += bullet.vel
 
         if green.rect.colliderect(bullet):
+
             player_bullets.remove(bullet)
 
         if bullet.rect.x + bullet.width >= WIDTH or bullet.rect.x < 0:
-            bullet.vel *= (-1)
+            bullet.vel = -bullet.vel
 
 
 
-
-def enemy_collisions(green,bullets,enemies):
-    for enemy in enemies:
-        if enemy.rect.colliderect(green.rect):
-            pygame.event.post(pygame.event.Event(player_hit))
-            enemies.remove(enemy)
-
-
-        else:
-            for bullet in bullets:
-                if bullet.rect.colliderect(enemy.rect):
-                    enemy.HP-= green.damage
-                    bullets.remove(bullet)
-
-
-def main():
+def main(frequency):
     global MAX_BULLETS
 
-    green = Hero(screen,200, 300, PLAYER_WIDTH, PLAYER_HEIGHT,VEL+3,space_ship,2)
-
-    bullet = Entities(screen, green.x + green.width, green.y + green.height // 2 - 3, 8, 6, 10, bullet_image)
+    green = Hero(screen,200, 300, PLAYER_WIDTH, PLAYER_HEIGHT,VEL+3,space_ship)
+    #bullet = Entities(screen, green.x + green.width, green.y + green.height // 2 - 3, 8, 6, 10, bullet_image)
     #yellow_menace = Hostiles(screen, WIDTH - 60, random.randint(2, HEIGHT - 50), 50, 50, 1, enemy_image)
     player_bullets = []
     enemies_alive = []
@@ -125,7 +77,7 @@ def main():
     player_health = 10
     clock = pygame.time.Clock()
     RUNNING = True
-
+    enemyhandler = enemyManager(screen, green, player_bullets,timer,[["yellow",frequency]])
 
 
     while RUNNING:
@@ -147,20 +99,18 @@ def main():
             if event.type == player_hit:
                 player_health -=1
 
+        green.update()
 
-        if timer == 1:
-            yellow_menace = Hostiles(screen, WIDTH + 60, random.randint(2, HEIGHT - 50), 50, 50, 3, enemy_image,1)
-            enemies_alive.append(yellow_menace)
-            print(player_health)
-
-
-
-        green.player_movement()
-        enemy_movement(enemies_alive, green)
         handle_bullets(player_bullets, green)
-        enemy_collisions(green,player_bullets,enemies_alive)
-        draw_window(green, player_bullets, enemies_alive,player_health)
+        draw_window(green, player_bullets, enemyhandler,player_health)
+        enemyhandler.update(timer)
+        if enemyhandler.enemies_killed>20:
+            RUNNING=False
+            pygame.quit()
+            print('you win')
 
+
+    return enemies_alive, player_health
 
 
 
@@ -210,15 +160,8 @@ def intro_screen():
 
 
 
-
-
-
-
 if __name__ == '__main__':
-    run= intro_screen()
+    run = intro_screen()
     if run:
-        main()
-
-
-
-
+        a = main(["yellow",60])
+        pygame.quit()
