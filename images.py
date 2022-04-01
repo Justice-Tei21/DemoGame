@@ -19,7 +19,7 @@ space_ship=pygame.transform.scale((asset_finder('space_ship.png')),(50,50))
 background=asset_finder(('starry_background.png'))
 icon= asset_finder('icon.png')
 bullet_image= pygame.transform.scale(asset_finder(('yellow_bullet.png')),(24,24))
-enemy_image =pygame.transform.scale(asset_finder('yellow_enemy.png'),(50,70))
+#enemy_image =pygame.transform.scale(asset_finder('yellow_enemy.png'),(50,70))
 heart_image = asset_finder('heart.png')
 
 

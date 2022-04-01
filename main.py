@@ -65,10 +65,10 @@ def handle_bullets(player_bullets, green):
 
 
 
-def main(frequency):
+def main(difficulty):
     global MAX_BULLETS
 
-    green = Hero(screen,200, 300, PLAYER_WIDTH, PLAYER_HEIGHT,VEL+3,space_ship)
+    green = Hero(screen,200, 300, VEL+3,space_ship)
     #bullet = Entities(screen, green.x + green.width, green.y + green.height // 2 - 3, 8, 6, 10, bullet_image)
     #yellow_menace = Hostiles(screen, WIDTH - 60, random.randint(2, HEIGHT - 50), 50, 50, 1, enemy_image)
     player_bullets = []
@@ -77,12 +77,12 @@ def main(frequency):
     player_health = 10
     clock = pygame.time.Clock()
     RUNNING = True
-    enemyhandler = enemyManager(screen, green, player_bullets,timer,[["yellow",frequency]])
+    enemyhandler = enemyManager(screen, green, player_bullets, timer, [difficulty])
 
 
     while RUNNING:
         timer +=1
-        timer = timer%FPS
+        timer = timer%3000
         clock.tick(FPS)
 
 
@@ -91,8 +91,7 @@ def main(frequency):
                 RUNNING = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e and len(player_bullets) < MAX_BULLETS:
-                    bullet = Entities(screen, green.x + green.width, green.y + green.height // 2 - 3, 8, 6, 10,
-                                      bullet_image)
+                    bullet = Entities(screen, green.x + green.width+3, green.y + green.height // 2+3 , 10, bullet_image)
                     player_bullets.append(bullet)
                 if event.key == pygame.K_q:
                     MAX_BULLETS+=1
@@ -163,5 +162,5 @@ def intro_screen():
 if __name__ == '__main__':
     run = intro_screen()
     if run:
-        a = main(["yellow",60])
+        a = main([["yellow",60],["yellow",60]])
         pygame.quit()

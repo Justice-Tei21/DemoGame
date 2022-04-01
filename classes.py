@@ -3,6 +3,7 @@ import random
 import pygame
 from pygame import draw
 from main import *
+from copy import deepcopy
 
 import json
 
@@ -12,33 +13,31 @@ import json
 
 
 
-class Entities(pygame.sprite.Sprite):
-    def __init__(self, screen, x, y, width, height, vel, image):
+class Entities():#pygame.sprite.Sprite
+    def __init__(self, screen, x, y,vel, image):
         super().__init__()
         self.screen = screen
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+
         self.vel = vel
         self.image = image.convert_alpha()
         self.rect = self.image.get_rect(midbottom=(self.x,self.y))#pygame.Rect(self.x, self.y, self.width, self.height)
         self.vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
-
-class Hostiles(pygame.sprite.Sprite):
-    def __init__(self, screene, x, y, width, height, vel, image,HP):
+        self.height= self.rect.height
+        self.width= self.rect.width
+class Hostiles():#pygame.sprite.Sprite
+    def __init__(self, screene, x, y, vel, image,HP):
         super().__init__()
         self.screen = screene
         self.x = x
         self.y = y*32
         self.HP = HP
         self.animation_count=0
-        self.width = width
-        self.height = height
-        self.vel = vel
-        self.image = image.convert_alpha()
+        self.vel = vel[0]
+        self.image = asset_finder(image).convert_alpha()
         self.time_of_launch = random.randint(100,800)
-        self.new_vel = random.randint(0,self.vel+3)
+        self.new_vel = random.randint(vel[1][0],vel[1][1])
 
         self.rect = self.image.get_rect(midbottom=(self.x,self.y))#pygame.Rect(self.x, self.y, self.width, self.height)
         self.targeting= False
@@ -47,14 +46,12 @@ class Hostiles(pygame.sprite.Sprite):
     def draw(self):
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
-        animation=[self.image]
-        if self.animation_count > len(animation)-1:
-            self.animation_count = 0
 
 
 
-        self.screen.blit(animation[self.animation_count],(self.x,self.y))
-        self.animation_count += 1
+
+        self.screen.blit(self.image,(self.x,self.y))
+
 
 
 
@@ -64,15 +61,14 @@ class Hostiles(pygame.sprite.Sprite):
 
 
         self.x = self.x + self.vector.x
-        print(self.vector)
+
         self.y = self.y + self.vector.y
 
 
     def movement(self, target):
 
         if self.targeting:
-            self.x = self.x + self.vector.x
-            self.y = self.y + self.vector.y
+            self.target()
 
 
         if self.x< WIDTH - 400 and self.targeting == False:
@@ -80,7 +76,7 @@ class Hostiles(pygame.sprite.Sprite):
             self.vel=self.new_vel
             self.target_vector = target.vector
             bullet_vector = self.vector
-            bullet_vector.y += random.randrange(6,14)+5#//10
+            #bullet_vector.y += random.randrange(6,14)+5#//10
             bullet_vector = self.target_vector - bullet_vector
             self.vector = bullet_vector.normalize() * self.vel
 
@@ -135,30 +131,66 @@ class enemyManager:
     def __init__(self,screen,player,bullets,clock,enemy_types=[]):
         self.enemies= []
         self.screen= screen
-        self.current_enemy= Hostiles(screen, WIDTH + 60, random.randint(1,17 ), 50, 50, 3, enemy_image,2)
         self.player= player
         self.bullets= bullets
         self.clock = clock
-        self.timer_length= 60
+        self.timer_length= 601
         self.enemies_killed = 0
+        self.enemy_types= enemy_types
 
 
-        with open("enemies.json", "r") as enemy_types:
-            self.aa = json.load(enemy_types)
+        with open("enemies.json", "r") as enemy_list:
+            self.enemy_type= []
+            enemy_json_file=json.load(enemy_list)
+            for ship in enemy_types:
+
+                aa=enemy_json_file[str(ship[0][0])]
+                speeds= aa["movement"]
+                sprite= aa["sprite"]
+                hp= aa["health"]
+                aa= Hostiles(screen,WIDTH+60,random.randint(1,17),speeds,sprite,hp)
+                self.enemy_type.append([aa,ship[0][1]])
+
 
 
     def addEnemy(self):
+        with open("enemies.json", "r") as enemy_list:
+            self.enemy_type = []
+            thetype = json.load(enemy_list)
+            for ship in self.enemy_types:
+                print(ship[0])
+                print(thetype["green"]["health"])
 
-        yellow_enemy= Hostiles(screen, WIDTH + 60, random.randint(1,17 ), 50, 50, 3, enemy_image,1)
-        if self.clock  == 1:
-            self.current_enemy= yellow_enemy
-            self.enemies.append(self.current_enemy)# remove an indent and everyting turns to hell
+                aa = thetype[str(ship[0][0])]
+
+                speeds = aa["movement"]
+                print(speeds)
+                sprite = aa["sprite"]
+                print(sprite)
+                hp = aa["health"]
+                print(hp)
+                aa = Hostiles(screen, WIDTH + 60, random.randint(1, 17), speeds, sprite, hp)
+                print(ship[0])
+                a_list= [speeds,sprite,hp]
+                self.enemy_type.append([aa, ship[0][1]])
+
+
+        for item in self.enemy_type:
+            print(item)
+            if self.clock%item[1] == 0:
+                #an_enemy= Hostiles(screen,WIDTH,random.randint(1,17),item[0])
+
+
+                self.enemies.append(item[0])
+
+
+        print(len(self.enemies))
+
     def draw(self):
 
         for enemy in self.enemies:
             enemy.draw()
 
-    pygame.display.update()
     def move(self):
         for enemy in self.enemies:
             enemy.movement(self.player)
@@ -191,6 +223,5 @@ class enemyManager:
 
     def inTimer(self,timer):
         self.clock = timer
-        self.clock = self.clock% self.timer_length
 
 
