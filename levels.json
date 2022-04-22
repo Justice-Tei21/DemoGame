@@ -1,0 +1,27 @@
+{
+  "1": {
+    "enemy spawning": [["yellow",120]],
+    "enemies to kill": 1,
+    "boss next": false
+  },
+  "2": {
+    "enemy spawning": [["green", 300],["yellow",120]],
+    "enemies to kill": 5,
+    "boss next": false
+  },
+  "3": {
+    "enemy spawning": [["yellow",120]],
+    "enemies to kill": 5,
+    "boss next": false
+  },
+  "4": {
+    "enemy spawning": [["yellow",120]],
+    "enemies to kill": 5,
+    "boss next": false
+  },
+  "5": {
+    "enemy spawning": [["yellow",120]],
+    "enemies to kill": 5,
+    "boss next": true
+  }
+}

@@ -1,9 +1,7 @@
 import random
 
 import pygame
-from pygame import draw
 from main import *
-from copy import deepcopy
 
 import json
 
@@ -26,6 +24,9 @@ class Entities():#pygame.sprite.Sprite
         self.vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
         self.height= self.rect.height
         self.width= self.rect.width
+
+
+
 class Hostiles():#pygame.sprite.Sprite
     def __init__(self, screene, x, y, vel, image,HP):
         super().__init__()
@@ -40,7 +41,7 @@ class Hostiles():#pygame.sprite.Sprite
         self.new_vel = random.randint(vel[1][0],vel[1][1])
 
         self.rect = self.image.get_rect(midbottom=(self.x,self.y))#pygame.Rect(self.x, self.y, self.width, self.height)
-        self.targeting= False
+        self.targeting = False
         self.vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
 
     def draw(self):
@@ -128,7 +129,7 @@ class Hero(Entities):
 
 
 class enemyManager:
-    def __init__(self,screen,player,bullets,clock,enemy_types=[]):
+    def __init__(self,screen,player,bullets,clock,enemy_types):
         self.enemies= []
         self.screen= screen
         self.player= player
@@ -137,54 +138,36 @@ class enemyManager:
         self.timer_length= 601
         self.enemies_killed = 0
         self.enemy_types= enemy_types
+        self.active= True
 
 
         with open("enemies.json", "r") as enemy_list:
-            self.enemy_type= []
+            self.enemy_attribs= []
             enemy_json_file=json.load(enemy_list)
             for ship in enemy_types:
-
-                aa=enemy_json_file[str(ship[0][0])]
+                #print(self.enemy_types)
+                #print(ship)
+                aa=enemy_json_file[str(ship[0])]
                 speeds= aa["movement"]
                 sprite= aa["sprite"]
                 hp= aa["health"]
                 aa= Hostiles(screen,WIDTH+60,random.randint(1,17),speeds,sprite,hp)
-                self.enemy_type.append([aa,ship[0][1]])
+                self.enemy_attribs.append([speeds,sprite,hp,ship[1]])
 
 
 
     def addEnemy(self):
-        with open("enemies.json", "r") as enemy_list:
-            self.enemy_type = []
-            thetype = json.load(enemy_list)
-            for ship in self.enemy_types:
-                print(ship[0])
-                print(thetype["green"]["health"])
 
-                aa = thetype[str(ship[0][0])]
-
-                speeds = aa["movement"]
-                print(speeds)
-                sprite = aa["sprite"]
-                print(sprite)
-                hp = aa["health"]
-                print(hp)
-                aa = Hostiles(screen, WIDTH + 60, random.randint(1, 17), speeds, sprite, hp)
-                print(ship[0])
-                a_list= [speeds,sprite,hp]
-                self.enemy_type.append([aa, ship[0][1]])
+        for item in self.enemy_attribs:# maybe use enemy_type
+            #print(item)
+            if self.clock%item[3] == 0: # use [1]
+                an_enemy= Hostiles(screen,WIDTH,random.randint(1,17),item[0],item[1],item[2])
 
 
-        for item in self.enemy_type:
-            print(item)
-            if self.clock%item[1] == 0:
-                #an_enemy= Hostiles(screen,WIDTH,random.randint(1,17),item[0])
+                self.enemies.append(an_enemy)#item[0]
 
 
-                self.enemies.append(item[0])
-
-
-        print(len(self.enemies))
+        #print(len(self.enemies))
 
     def draw(self):
 
@@ -196,6 +179,8 @@ class enemyManager:
             enemy.movement(self.player)
 
             if enemy.rect.right<0:
+                pygame.event.post(pygame.event.Event(player_hit))
+
                 self.enemies.remove(enemy)
     def enemy_collisions(self):
         for enemy in self.enemies:
@@ -215,13 +200,14 @@ class enemyManager:
             self.enemies.remove(enemy)
             self.enemies_killed+=1
     def update(self,timer):
-
-        self.addEnemy()
-        self.move()
-        self.inTimer(timer)
+        if self.active:
+            self.addEnemy()
+            self.move()
+            self.inTimer(timer)
         self.enemy_collisions()
 
     def inTimer(self,timer):
-        self.clock = timer
+        self.clock += 1
+        self.clock%=3600
 
 

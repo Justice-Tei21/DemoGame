@@ -1,7 +1,7 @@
 {
 
   "green": {
-    "health": 10,
+    "health": 3,
     "movement": [2,[0,0]],
     "Shooting": true,
     "sprite": "green_enemy.png"
@@ -11,7 +11,7 @@
 
   "yellow": {
     "health": 1,
-    "movement": [5,[2,7]],
+    "movement": [2,[5,9]],
     "shooting": false,
     "sprite": "yellow_enemy.png"
 
