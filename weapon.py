@@ -4,6 +4,30 @@ import classes
 from images import asset_finder
 from json import load
 
+
+class SpecialTrait:
+    def __init__(self,type):
+
+        self.type = type
+
+        self.gettrait()
+
+    def target(self):
+        pass
+        #launces towards a target
+
+    def march(self,x):
+        x-=4
+        #goes in a straight line
+
+    def shoot(self,weapontype, xpos,ypos): # takes the center y and the left x of the rect
+        #shoots a bullet towards the left
+        Bullet(weapontype,xpos,ypos)
+
+    def gettrait(self):
+        things = {"target": self.target, "march": self.march, "shoot": self.shoot}
+        return things[self.type]
+
 class Bullet:
     def __init__(self,attrib_list,x,y):
         self.x = x
@@ -27,7 +51,7 @@ class Bullet:
     def move(self):
         self.x += self.speed
 
-        self.rect.x= self.x
+        self.rect.x = self.x
 
 
 
@@ -47,11 +71,12 @@ class Weapon():
 
 
     def addBullet(self):
-        if self._current_weapon["direction"]== "right":
-            _direction= self.player.rect.right
+        if self._current_weapon["direction"]== "left":
+            _pos= self.player.rect.right
         else:
-            _direction= self.player.rect.left
-        self.bullets.append(Bullet(self._current_weapon,_direction))
+            _pos= self.player.rect.left
+        self.bullets.append(Bullet(self._current_weapon,_pos,self.player.y))
+
 
     def changeWeapon(self,new_weapon):
         self._current_weapon= self._armory[new_weapon]

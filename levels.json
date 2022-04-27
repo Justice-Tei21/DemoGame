@@ -16,12 +16,12 @@
   },
   "4": {
     "enemy spawning": [["yellow",120]],
-    "enemies to kill": 5,
+    "enemies to kill": 15,
     "boss next": false
   },
   "5": {
     "enemy spawning": [["yellow",120]],
-    "enemies to kill": 5,
+    "enemies to kill": 20,
     "boss next": true
   }
 }

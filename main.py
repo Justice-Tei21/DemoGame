@@ -8,6 +8,8 @@ import random
 import time
 
 
+
+
 pygame.init()
 WIDTH, HEIGHT = 1080, 608
 FPS = 60
@@ -86,7 +88,7 @@ def scene(difficulty, health=10, enemies_to_kill=20, playerpos = (200,300)):
     playing = True
     enemyhandler = enemyManager(screen, green, player_bullets, timer, difficulty)
 
-
+    active = True
     while RUNNING:
         timer +=1
         timer = timer%3600
@@ -106,6 +108,9 @@ def scene(difficulty, health=10, enemies_to_kill=20, playerpos = (200,300)):
                     power_up= True
                     green.damage+=6
                     #enemyhandler.active = not enemyhandler.active
+
+                if event.key == pygame.K_SPACE:
+                    enemyhandler.active = not enemyhandler.active
             if event.type == player_hit:
                 player_health -=1
                 if player_health<=0:

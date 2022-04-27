@@ -11,6 +11,7 @@ import json
 
 
 
+
 class Entities():#pygame.sprite.Sprite
     def __init__(self, screen, x, y,vel, image):
         super().__init__()
@@ -28,7 +29,7 @@ class Entities():#pygame.sprite.Sprite
 
 
 class Hostiles():#pygame.sprite.Sprite
-    def __init__(self, screene, x, y, vel, image,HP):
+    def __init__(self, screene, x, y, vel, image,HP,special):
         super().__init__()
         self.screen = screene
         self.x = x
@@ -40,39 +41,33 @@ class Hostiles():#pygame.sprite.Sprite
         self.time_of_launch = random.randint(100,800)
         self.new_vel = random.randint(vel[1][0],vel[1][1])
 
-        self.rect = self.image.get_rect(midbottom=(self.x,self.y))#pygame.Rect(self.x, self.y, self.width, self.height)
+        self.special = special
+
+        self.rect = self.image.get_rect(midleft=(self.x,self.y))#pygame.Rect(self.x, self.y, self.width, self.height)
         self.targeting = False
         self.vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
+
 
     def draw(self):
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 
-
-
-
         self.screen.blit(self.image,(self.x,self.y))
 
-
-
-
     def target(self):
-
-
-
 
         self.x = self.x + self.vector.x
 
         self.y = self.y + self.vector.y
-
 
     def movement(self, target):
 
         if self.targeting:
             self.target()
 
-
         if self.x< WIDTH - 400 and self.targeting == False:
+            if self.special== "target":
+                pass
             self.targeting = True
             self.vel=self.new_vel
             self.target_vector = target.vector
@@ -89,11 +84,7 @@ class Hostiles():#pygame.sprite.Sprite
 
 
 
-"""
-class Bullet(Entities):
-    def __init__(self,*args):
-        super().__init__(*args)
-"""
+
 
 
 class Hero(Entities):
@@ -151,8 +142,9 @@ class enemyManager:
                 speeds= aa["movement"]
                 sprite= aa["sprite"]
                 hp= aa["health"]
-                aa= Hostiles(screen,WIDTH+60,random.randint(1,17),speeds,sprite,hp)
-                self.enemy_attribs.append([speeds,sprite,hp,ship[1]])
+                special = aa["special"]
+                aa= Hostiles(screen,WIDTH+60,random.randint(1,17),speeds,sprite,hp,special)
+                self.enemy_attribs.append([speeds,sprite,hp,ship[1],special])
 
 
 
@@ -161,7 +153,7 @@ class enemyManager:
         for item in self.enemy_attribs:# maybe use enemy_type
             #print(item)
             if self.clock%item[3] == 0: # use [1]
-                an_enemy= Hostiles(screen,WIDTH,random.randint(1,17),item[0],item[1],item[2])
+                an_enemy= Hostiles(screen,WIDTH,random.randint(1,17),item[0],item[1],item[2],item[3])
 
 
                 self.enemies.append(an_enemy)#item[0]
