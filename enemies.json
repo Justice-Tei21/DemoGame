@@ -4,7 +4,8 @@
     "health": 3,
     "movement": [2,[0,0]],
     "special": "shoot",
-    "sprite": "green_enemy.png"
+    "sprite": "green_enemy.png",
+    "weapon":"bang"
 
 
   },
@@ -17,10 +18,17 @@
 
 
 
+  },
+
+
+  "blue": {
+    "health": 1,
+    "movement": [5,[5,5]],
+    "special" : "march",
+    "sprite":"blue_enemy.png"
+
+
   }
-
-
-
 
 
 
