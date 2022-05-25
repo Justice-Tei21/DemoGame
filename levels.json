@@ -1,6 +1,6 @@
 {
   "1": {
-    "enemy spawning": [["green", 150],["yellow",30],["blue",300]],
+    "enemy spawning": [["green", 150],  ["yellow",120],["blue",300]],
     "enemies to kill": 50
   },
   "2": {

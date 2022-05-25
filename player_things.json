@@ -1,0 +1,13 @@
+{
+
+  "dimensions": [64,64] ,
+
+  "animations": {
+    "idle": [],
+    "shoot": [],
+    "death": []
+  }
+
+
+
+}

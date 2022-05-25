@@ -23,7 +23,7 @@
 
   "blue": {
     "health": 1,
-    "movement": [5,[5,5]],
+    "movement": [6,[6,6]],
     "special" : "march",
     "sprite":"blue_enemy.png"
 
