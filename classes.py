@@ -11,9 +11,11 @@ from main import WIDTH,HEIGHT, player_hit,enemy_hit, new_enemy_bullet
 import json
 
 
+
+#basic entity class, Not sure if it's used
 class Entities:  # base class for all entities/ only used for the player
     def __init__(self, screene, x, y, vel, image):
-        #super().__init__()   for if y want to use sprite
+        #super().__init__()   for if you want to use sprite class
         self.screen = screene
         self.x = x
         self.y = y
@@ -26,6 +28,8 @@ class Entities:  # base class for all entities/ only used for the player
         self.width = self.rect.width
 
 
+
+#the class of the enemy
 class Hostiles:
     def __init__(self, screen, x, y, vel, image, hp, special, bullet_con): #  lägg till bullet list
         # super().__init__()
@@ -50,8 +54,6 @@ class Hostiles:
         #self.vector = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
 
 
-        # prototype approaches
-        #self.move_rect= [0,2]
 
     def draw(self):
         # mix mellan draw och update metoderna
@@ -61,12 +63,7 @@ class Hostiles:
 
         self.screen.blit(self.image, (self.rect.x, self.rect.y))
 
-    def target(self):
 
-
-        self.x = self.x + self.vector.x
-
-        self.y = self.y + self.vector.y
 
     def movement(self, target):
 
@@ -78,6 +75,9 @@ class Hostiles:
 
             self.targeting = True
             self.vel = self.new_vel
+
+
+            #values used for targeting special
             if self.special == "target":
                 own_vector = pygame.Vector2(self.x,self.y)
 
@@ -86,6 +86,8 @@ class Hostiles:
                 bullet_vector = pygame.Vector2(target.x,target.y)
                 self.vector = bullet_vector - own_vector
                 self.vector.scale_to_length(self.vel)
+
+                #init shooting values
             if self.special== "shoot":
                 self.shooting= True
                 self.timer = time.time()
@@ -95,7 +97,11 @@ class Hostiles:
             pygame.draw.rect(self.screen,(211,211,222),self.rect)
             self.x-=self.vel
 
+
+                            # the three states
     def shot_everything(self):
+
+            #bang bang
         curr_time = time.time()
         if curr_time - self.timer > 2:
 
@@ -105,15 +111,28 @@ class Hostiles:
             self.bullet_con.addbullet(self.rect.topleft)
             #print(len(self.bullet_con))
 
+
+    def target(self):
+            #target locked
+
+        self.x = self.x + self.vector.x
+
+        self.y = self.y + self.vector.y
+
+
     def marching_on(self):
+            #it's a long way to tipperary
         self.x-=self.vel
 
 
-
+#the players class
 class Hero(Entities):
     def __init__(self,*args):
         super().__init__(*args)
         self.damage=1
+
+
+        # the players movement and barriers
     def player_movement(self):
         keys_pressed = pygame.key.get_pressed()
 
@@ -130,10 +149,11 @@ class Hero(Entities):
         self.rect.y = self.y
         #self.vector = pygame.math.Vector2(self.x, self.y)
 
+
     def draw(self):
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
-        animation = [self.image]
+        #eeanimation = [self.image]  # there is no animation
 
         self.screen.blit(self.image, (self.x, self.y))
 
@@ -153,6 +173,8 @@ class EnemyManager:
         self.active = True
         self.bullet_con = bullet_list
 
+
+            #takes the attribs from the dict and
         with open("enemies.json", "r") as enemy_list:
             self.enemy_attribs = []
             enemy_json_file = json.load(enemy_list)
@@ -171,10 +193,11 @@ class EnemyManager:
     #  creates an enemy of a certain type and adds it to the current list
     def addenemy(self):
 
-        for item in self.enemy_attribs:  # maybe use enemy_type
-            # print(item)
 
-            if self.clock % item[3] == 0:  # use [1]
+            #item is a type of enemy, like green or blueship
+        for item in self.enemy_attribs:  # maybe use enemy_type
+
+            if self.clock % item[3] == 0:
                 an_enemy = Hostiles(self.screen, WIDTH, random.randint(1, 17), item[0], item[1],
                                     item[2], item[4], self.bullet_con)
 
@@ -222,40 +245,52 @@ class EnemyManager:
         self.clock %= 3600
 
 
-class Bullet(Entities):
+#class Bullet(Entities):
 
-    def move(self):
-        self.x += self.vel
+#    def move(self):
+#        self.x += self.vel
 
 
+
+#deal with the enemy bullets
 class BulletHandler:
     def __init__(self, screen):
         self.enemybullets = []
-        self.player_bullets = []
+        self.player_bullets = [] #don't think this is used
         self.screen = screen
         self.image = asset_finder("static.png").convert_alpha()
 
-    def addbullet(self, position):
-        self.enemybullets.append(self.image.get_rect(topleft=(position)))
 
+
+        #add bullet to the enemy bullet list
+    def addbullet(self, position):
+        self.enemybullets.append(self.image.get_rect(center=(position)))
+
+        #checks if a bullet collides and checks for proper protocol
     def collision(self,player,bullet):
         #for bullet in self.enemybullets:
 
+            #start the playerhit event
         if bullet.colliderect(player.rect):
             pygame.event.post(pygame.event.Event(player_hit))
             self.enemybullets.remove(bullet)
 
+            #deletes bullet for reuse
         if bullet.x + bullet.width >= WIDTH or bullet.x < 0:
             self.enemybullets.remove(bullet)
 
+
+    #moves the bullet
     @staticmethod
     def move(bullet):
         bullet.x -= 6
 
+        #sepatrate from the update becauseof how blit works
     def draw(self):
         for bullet in self.enemybullets:
             self.screen.blit(self.image, bullet.topleft)
 
+        #bullet updater
     def update(self, player):
         for bullet in self.enemybullets:
             self.move(bullet)

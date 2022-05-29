@@ -10,6 +10,8 @@ def asset_finder(png):
     return asset
 
 
+
+
 STATIC_IMAGE= asset_finder('static.png')
 STATIC=pygame.transform.rotate(pygame.transform.scale(STATIC_IMAGE,(50,20)),60)
 

@@ -1,19 +1,17 @@
 {
+  "this is not used": 0,
   "standard": {
-    "damage":5,
+    "damage": 5,
     "sprite": "yellow_bullet.png",
     "type": "bullet",
     "speed": 12,
     "direction": "right"
-
   },
   "none": {
-    "damage":0,
+    "damage": 0,
     "sprite": "heart.png",
     "type": "bullet",
     "speed": 0,
     "direction": "right"
-
-
-
+  }
 }
