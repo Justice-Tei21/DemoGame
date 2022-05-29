@@ -108,8 +108,8 @@ class Hostiles:
             self.timer = curr_time
             image = pygame.Surface((50,50))
             image.fill((255,0,0))
-            self.bullet_con.addbullet(self.rect.topleft)
-            #print(len(self.bullet_con))
+            self.bullet_con.addbullet(self.rect.center)
+            
 
 
     def target(self):
@@ -160,6 +160,8 @@ class Hero(Entities):
     def update(self):
         self.player_movement()
 
+
+# adds and removes enemies and handles all of their physics and events
 class EnemyManager:
     def __init__(self, screen, player, bullets, clock, enemy_types, bullet_list):
         self.enemies = []
@@ -204,17 +206,22 @@ class EnemyManager:
                 self.enemies.append(an_enemy)
 
     def draw(self):
+        #blits every enemy
         for enemy in self.enemies:
             enemy.draw()
 
     def move(self):
+
+            #excecutes movement method
         for enemy in self.enemies:
             enemy.movement(self.player)
 
+            #takes life if too far right
             if enemy.rect.right < 0:
                 pygame.event.post(pygame.event.Event(player_hit))
                 self.enemies.remove(enemy)
 
+        #handles collision and events
     def enemy_collisions(self):
         for enemy in self.enemies:
 
@@ -227,18 +234,19 @@ class EnemyManager:
                         enemy.HP -= self.player.damage
                         self.killenemy(enemy)
                         self.bullets.remove(bullet)
-
+        #removes enemy from list. garbage collector removes from memory
     def killenemy(self, enemy):
         if enemy.HP < 1:
             self.enemies.remove(enemy)
             self.enemies_killed += 1
 
+
     def update(self, timer):
-        if self.active:
+        if self.active:  #this was part of ebbe's exploit
             self.addenemy()
             self.move()
             self.intimer(timer)
-        self.enemy_collisions()
+        self.enemy_collisions() #this was the main crux of his exploit
 
     def intimer(self, timer):
         self.clock += 1

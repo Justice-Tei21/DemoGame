@@ -179,8 +179,9 @@ def scene(difficulty, health=10, enemies_to_kill=20, playerpos=(200, 300)):
     return player_health,enemyhandler.enemies_killed, playing,(green.x,green.y)
 
 
-
+    #displays total score at the end
 def end_credits(kills, lives):
+
     running = True
 
     text= f'you had {kills} kills and survived with {lives} lives'
@@ -197,7 +198,7 @@ def end_credits(kills, lives):
                 running = False
 
         screen.fill((0, 0, 0))
-        screen.blit(a, (300, 0))
+        screen.blit(a, (300, 40))
         screen.blit(b, (300, 400))
 
 
@@ -252,7 +253,7 @@ def intro_screen():
 
 
 def main():
-
+    #play intro
     run = intro_screen()
 
     lifes = 10
@@ -262,15 +263,17 @@ def main():
     with open("levels.json", "r") as level_attribs:
         level_attribs = json.load(level_attribs)
     player_pos = (200, 300)
+    #plays every level in dict
     for level in level_attribs:       #range(1,level_amount+1)
 
         if run:
             i = level_attribs[str(level)]
             lifes, enemies_killed ,run, player_pos = scene(i["enemy spawning"], lifes,i["enemies to kill"],(player_pos))
             total_kills += enemies_killed
-    print(f"you had {total_kills} kills and survived with {lifes}, lives")
-    print("total score:" + str(total_kills * lifes))
 
+
+
+    #play end credits
     end_credits(total_kills, lifes)
 
 
