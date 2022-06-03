@@ -6,12 +6,14 @@ import random
 import time
 
 
+
 import math
 
 
 #pygame initialization
 pygame.init()
 pygame.font.init()
+pygame.mixer.init()
 
 
 
@@ -137,7 +139,7 @@ def scene(difficulty, health=10, enemies_to_kill=20, playerpos=(200, 300)):
 
             if event.type == pygame.KEYDOWN:
                 #spawns bullet
-                if event.key == pygame.K_e and len(player_bullets) < MAX_BULLETS:
+                if event.key == pygame.K_SPACE and len(player_bullets) < MAX_BULLETS:
                     bullet = Entities(screen, green.x + green.width+7, green.y + green.height // 2+3 , 10, bullet_image)
                     e_BulletHandler.player_bullets.append(bullet)
                     player_bullets.append(bullet)
@@ -159,8 +161,8 @@ def scene(difficulty, health=10, enemies_to_kill=20, playerpos=(200, 300)):
             if event.type == player_hit:
                 player_health -=1
                 if player_health<=0:
-                    running=False
-                    pygame.quit()
+                    running = False
+                    playing = False
 
 
 
@@ -190,6 +192,7 @@ def end_credits(kills, lives):
     b=pygame.font.Font(pygame.font.get_default_font(), 20).render(score, False, (0, 255, 255))
     screen.blit(a, (300, 400))
 
+    pygame.mixer.music.stop()
 
     while running:
 
@@ -248,7 +251,7 @@ def intro_screen():
         pygame.display.update()
 
 
-
+    pygame.mixer.music.play(-1)
     return play
 
 
@@ -293,7 +296,7 @@ if __name__ == '__main__':
     background.convert_alpha()
     background_list = [background, background]
     background_pos = [0, WIDTH]
-
+    pygame.mixer.music.load(os.path.join('assets', 'space_opera.mp3'))
 
 
     bullet_image.convert_alpha()

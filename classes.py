@@ -291,7 +291,7 @@ class BulletHandler:
     #moves the bullet
     @staticmethod
     def move(bullet):
-        bullet.x -= 6
+        bullet.x -= 12
 
         #sepatrate from the update becauseof how blit works
     def draw(self):

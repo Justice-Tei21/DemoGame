@@ -2,7 +2,7 @@
 
   "green": {
     "health": 3,
-    "movement": [2,[0,0]],
+    "movement": [4,[0,0]],
     "special": "shoot",
     "sprite": "green_enemy.png",
     "weapon":"bang"
@@ -11,8 +11,8 @@
   },
 
   "yellow": {
-    "health": 1,
-    "movement": [2,[5,9]],
+    "health": 2,
+    "movement": [4,[6,11]],
     "special": "target",
     "sprite": "yellow_enemy.png"
 
@@ -22,8 +22,8 @@
 
 
   "blue": {
-    "health": 1,
-    "movement": [6,[6,6]],
+    "health": 2,
+    "movement": [8,[12,12]],
     "special" : "march",
     "sprite":"blue_enemy.png"
 

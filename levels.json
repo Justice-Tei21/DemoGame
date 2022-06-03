@@ -4,12 +4,12 @@
     "enemies to kill": 50
   },
   "2": {
-    "enemy spawning": [["green", 150],["yellow",120]],
-    "enemies to kill": 10
+    "enemy spawning": [["yellow",60]],
+    "enemies to kill": 30
   },
   "3": {
-    "enemy spawning": [["yellow",120]],
-    "enemies to kill": 15
+    "enemy spawning": [["yellow",120],["blue",100]],
+    "enemies to kill": 40
   },
   "4": {
     "enemy spawning": [["yellow",120]],
